@@ -4,10 +4,20 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from PreprocessText import preprocess_text
 
 # Load your train and test sets (from your saved CSVs)
 train_df = pd.read_csv('train_set.csv')
 test_df = pd.read_csv('test_set.csv')
+
+# for text in train_df['text']:
+#     preprocessed_text = preprocess_text(text, mode='tokenized')
+#     print(preprocessed_text)
+#     preprocessed_text = preprocess_text(text, mode='lemmatized')
+#     print(preprocessed_text)
+#     preprocessed_text = preprocess_text(text, mode='stemmed')
+#     print(preprocessed_text)
+
 
 # Initialize the TF-IDF Vectorizer
 # max_features limits the vocabulary size, ngram_range captures words and bigrams
@@ -69,18 +79,18 @@ for rank, (i, j, score) in enumerate(top_pairs, 1):
     print(f"   - Tweet A: {tweets[i]}")
     print(f"   - Tweet B: {tweets[j]}")
 
-# Initialize the classifier
-model = LogisticRegression(max_iter=1000, random_state=42)
 
-# Train (fit) the model on the TF-IDF training data
-model.fit(X_train_tfidf, y_train)
+column_names1 = [f"feature_{i}" for i in range(X_train_tfidf.shape[1])]
+column_names2 = [f"feature_{i}" for i in range(y_train.shape[1])]
+column_names3 = [f"feature_{i}" for i in range(X_test_tfidf.shape[1])]
+column_names4 = [f"feature_{i}" for i in range(y_test.shape[1])]
 
-# Predict on the test data
-y_pred = model.predict(X_test_tfidf)
+X_train_df = pd.DataFrame(X_train_tfidf.toarray(), columns=column_names1)
+y_train_df = pd.DataFrame(y_train.toarray(), columns=column_names2)
+X_test_df = pd.DataFrame(X_test_tfidf.toarray(), columns=column_names3)
+y_test_df = pd.DataFrame(y_test.toarray(), columns=column_names4)
 
-# Evaluate accuracy
-accuracy = accuracy_score(y_test, y_pred)
-print(f"Test Accuracy: {accuracy:.4f}")
-
-# Detailed report per class
-print(classification_report(y_test, y_pred))
+X_train_df.to_csv('X_train_df.csv', index=False)
+y_train_df.to_csv('y_train_df.csv', index=False)
+X_test_df.to_csv('X_test_df.csv', index=False)
+y_test_df.to_csv('y_test_df.csv', index=False)
