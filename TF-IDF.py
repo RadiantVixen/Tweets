@@ -19,7 +19,7 @@ y_train = train_df['label']
 
 # Transform the test text using the SAME fitted vectorizer
 X_test_tfidf = vectorizer.transform(test_df['text'])
-y_test = test_df['label']
+y_test = test_df['label'] 
 
 print("TF-IDF Train Matrix Shape:", X_train_tfidf.shape)
 print("TF-IDF Test Matrix Shape:", X_test_tfidf.shape)
