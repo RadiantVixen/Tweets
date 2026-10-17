@@ -6,7 +6,7 @@ def load_csv_tweets(filepath, label):
         content = f.read()
     
     tweets = [t.strip() for t in content.split(',') if t.strip()]
-    
+    print(tweets)
     return pd.DataFrame({'text': tweets, 'label': label})
 
 
@@ -14,12 +14,16 @@ df_neg = load_csv_tweets('data/processedNegative.csv', 'negative')
 df_neu = load_csv_tweets('data/processedNeutral.csv', 'neutral')
 df_pos = load_csv_tweets('data/processedPositive.csv', 'positive')
 
+print(f"Negative: {len(df_neg)} | Neutral: {len(df_neu)} | Positive: {len(df_pos)}")
+
 df = pd.concat([df_neg, df_neu, df_pos], ignore_index=True)
 df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
+df = df.dropna(subset=['text'])
+df['text'] = df['text'].astype(str).str.strip()
 df = df[df['text'].str.len() > 0]
 
-print(f"Total samples loaded: {len(df)}")
+print(f"Total samples after cleaning: {len(df)}")
 print(df['label'].value_counts())
 
 X = df['text']
@@ -30,15 +34,9 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 train_df = pd.DataFrame({'text': X_train, 'label': y_train})
-test_df = pd.DataFrame({'text': X_test, 'label': y_test})
+test_df  = pd.DataFrame({'text': X_test,  'label': y_test})
 
 train_df.to_csv('train_set.csv', index=False)
 test_df.to_csv('test_set.csv', index=False)
 
-
-print("Files saved successfully!")
-print(f"Training set size: {len(X_train)}")
-print(f"Test set size: {len(X_test)}")
-
-
-
+# print(f"\nSaved: train={len(train_df)}  test={len(test_df)}")
